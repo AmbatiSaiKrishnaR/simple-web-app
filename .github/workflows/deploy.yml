@@ -1,0 +1,43 @@
+name: Deploy to AWS ECS
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Log in to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Build, tag, and push the Docker image
+        run: |
+          docker build -t ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.us-east-1.amazonaws.com/nagu/smallapplication:latest .
+          docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.us-east-1.amazonaws.com/nagu/smallapplication:latest
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to Amazon ECS
+        id: deploy-ecs
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+        with:
+          task-definition: arn:aws:ecs:us-east-1:851725350529:task-definition/application-task:1
+          service: my-ecs-service
+          cluster: my-cluster
+          wait-for-service-stability: true
+
+  rollback:
+    runs-on: ubuntu-latest
+    if: failure()
+    steps:
+      - name: Rollback Deployment
+        run: |
+          aws ecs update-service --cluster my-cluster --service my-ecs-service --force-new-deployment
