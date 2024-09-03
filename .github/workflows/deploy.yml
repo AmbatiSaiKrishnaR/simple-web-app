@@ -20,8 +20,8 @@ jobs:
 
       - name: Build, tag, and push the Docker image
         run: |
-          docker build -t ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.us-east-1.amazonaws.com/nagu/smallapplication .
-          docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.us-east-1.amazonaws.com/nagu/smallapplication .
+          docker build -t ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.us-east-1.amazonaws.com/nagu/smallapplication:latest .
+          docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.us-east-1.amazonaws.com/nagu/smallapplication:latest
 
   deploy:
     needs: build
@@ -33,9 +33,9 @@ jobs:
         with:
           task-definition: arn:aws:ecs:us-east-1:851725350529:task-definition/application-task
           service: my-ecs-service
-          cluster: my-cluster
+          cluster: application-cluster
           wait-for-service-stability: true
-          region: us-east-1  # Specify the region here as well
+          region: us-east-1  # Specify the region here
 
   rollback:
     runs-on: ubuntu-latest
@@ -43,5 +43,4 @@ jobs:
     steps:
       - name: Rollback Deployment
         run: |
-          aws ecs update-service --cluster my-cluster --service my-ecs-service --force-new-deployment
-          region: us-east-1  # Specify the region here as well
+          aws ecs update-service --cluster application-cluster --service my-ecs-service --force-new-deployment --region us-east-1
