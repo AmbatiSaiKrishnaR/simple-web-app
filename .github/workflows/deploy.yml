@@ -12,11 +12,12 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
+      - name: Set up AWS region
+        run: echo "AWS_DEFAULT_REGION=us-east-1" >> $GITHUB_ENV
+
       - name: Log in to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
-        with:
-          region: us-east-1  # Specify the region here
 
       - name: Build, tag, and push the Docker image
         run: |
@@ -35,7 +36,6 @@ jobs:
           service: my-ecs-service
           cluster: application-cluster
           wait-for-service-stability: true
-          region: us-east-1  # Specify the region here
 
   rollback:
     runs-on: ubuntu-latest
