@@ -20,8 +20,8 @@ jobs:
 
       - name: Build, tag, and push the Docker image
         run: |
-          docker build -t ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.us-east-1.amazonaws.com/nagu/smallapplication:latest .
-          docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.us-east-1.amazonaws.com/nagu/smallapplication:latest
+          docker build -t ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.us-east-1.amazonaws.com/nagu/smallapplication .
+          docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.us-east-1.amazonaws.com/nagu/smallapplication .
 
   deploy:
     needs: build
@@ -31,7 +31,7 @@ jobs:
         id: deploy-ecs
         uses: aws-actions/amazon-ecs-deploy-task-definition@v1
         with:
-          task-definition: arn:aws:ecs:us-east-1:851725350529:task-definition/application-task:1
+          task-definition: arn:aws:ecs:us-east-1:851725350529:task-definition/application-task
           service: my-ecs-service
           cluster: my-cluster
           wait-for-service-stability: true
