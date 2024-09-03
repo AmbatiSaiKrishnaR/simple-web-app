@@ -23,8 +23,8 @@ jobs:
 
       - name: Build, tag, and push the Docker image
         run: |
-          docker build -t ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.us-east-1.amazonaws.com/nagu/smallapplication:latest .
-          docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.us-east-1.amazonaws.com/nagu/smallapplication:latest
+          docker build -t ${{ AWS_ACCOUNT_ID }}.dkr.ecr.us-east-1.amazonaws.com/nagu/smallapplication:latest .
+          docker push ${{ AWS_ACCOUNT_ID }}.dkr.ecr.us-east-1.amazonaws.com/nagu/smallapplication:latest
 
   deploy:
     needs: build
@@ -38,7 +38,7 @@ jobs:
           service: my-ecs-service
           cluster: application-cluster
           wait-for-service-stability: true
-          region: us-east-1  # Explicitly set the AWS region here
+          
 
   rollback:
     runs-on: ubuntu-latest
