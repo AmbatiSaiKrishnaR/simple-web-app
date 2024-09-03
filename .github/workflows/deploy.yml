@@ -18,6 +18,8 @@ jobs:
       - name: Log in to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
+        with:
+          region: us-east-1
 
       - name: Build, tag, and push the Docker image
         run: |
@@ -36,6 +38,7 @@ jobs:
           service: my-ecs-service
           cluster: application-cluster
           wait-for-service-stability: true
+          region: us-east-1  # Explicitly set the AWS region here
 
   rollback:
     runs-on: ubuntu-latest
